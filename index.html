@@ -54,6 +54,8 @@ h1 em{font-style:normal;background:linear-gradient(90deg,#9cc4ff,#5b8cff);-webki
 .rb{position:relative;width:min(470px,100%);aspect-ratio:1;animation:bob 5.5s ease-in-out infinite}
 @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
 .rt{position:absolute;inset:0;transition:transform .25s ease-out;will-change:transform}
+.rt video#rh{z-index:1;opacity:0;transition:opacity .16s}
+.rt video#rh.on{opacity:1}
 .rt video#rw{z-index:2;opacity:0;transition:opacity .18s}
 .rt video#rw.on{opacity:1}
 .rt video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;-webkit-mask-image:radial-gradient(closest-side,#000 72%,transparent 100%);mask-image:radial-gradient(closest-side,#000 72%,transparent 100%);background:transparent}
@@ -167,6 +169,7 @@ footer .btn{margin-bottom:22px}
   <div class="robot rv" id="robot" aria-label="Робот AURA">
     <div class="bubble" id="bubble">Привет! Я AURA</div>
     <div class="rb"><div class="rt" id="rt">
+      <video id="rh" src="media/robot/head_vert.mp4" muted playsinline preload="auto"></video>
       <video id="rw" src="media/robot/wave.mp4" muted playsinline preload="auto"></video>
       <video id="rv" src="media/robot/head_turn.mp4" muted playsinline preload="auto" poster="media/robot/center.jpg"></video>
     </div></div>
@@ -290,7 +293,7 @@ if(canHover){
  });
 }else{
  const vio=new IntersectionObserver(es=>es.forEach(e=>{const v=e.target;if(e.isIntersecting){v.play().catch(()=>{})}else{v.pause()}}),{threshold:.35});
- document.querySelectorAll('video:not(#rv):not(#rw)').forEach(v=>vio.observe(v));
+ document.querySelectorAll('video:not(#rv):not(#rw):not(#rh)').forEach(v=>vio.observe(v));
 }
 // счётчики
 const cio=new IntersectionObserver(es=>es.forEach(e=>{if(!e.isIntersecting)return;const el=e.target,to=+el.dataset.to,pre=el.dataset.pre||'';let t0=null;
@@ -312,42 +315,48 @@ document.querySelectorAll('[data-zoom]').forEach(p=>p.addEventListener('click',(
 lb.addEventListener('click',()=>lb.classList.remove('on'));
 addEventListener('keydown',e=>{if(e.key==='Escape')lb.classList.remove('on')});
 
-// робот AURA: голова плавно поворачивается за мышкой (перемотка видео)
+// робот AURA: голова плавно поворачивается и смотрит вверх/вниз за мышкой (перемотка двух видео)
 (function(){
- const robot=document.getElementById('robot'),rt=document.getElementById('rt'),v=document.getElementById('rv'),bub=document.getElementById('bubble');
+ const robot=document.getElementById('robot'),rt=document.getElementById('rt'),v=document.getElementById('rv'),vh=document.getElementById('rh'),w=document.getElementById('rw'),bub=document.getElementById('bubble');
  if(!robot||!v)return;
- const w=document.getElementById('rw');let waving=false;
+ let waving=false;
  function playWave(){if(waving||!w)return;waving=true;w.currentTime=0;w.classList.add('on');w.play().catch(()=>{waving=false;w.classList.remove('on')});bub.classList.add('on');setTimeout(()=>bub.classList.remove('on'),3000)}
  if(w)w.addEventListener('ended',()=>{w.classList.remove('on');waving=false});
- let target=.5,cur=.5,dur=6,last=Date.now(),hover=null,ready=false,shown=-1;
- v.addEventListener('loadedmetadata',()=>{dur=v.duration||6;ready=true;v.currentTime=dur*.5;setTimeout(playWave,1100)});
+ let tH=.5,tV=0,cH=.5,cV=0,durA=6,durB=6,last=Date.now(),hover=null,ready=false,shH=-1,shV=-1,domV=false;
+ v.addEventListener('loadedmetadata',()=>{durA=v.duration||6;ready=true;v.currentTime=durA*.5;setTimeout(playWave,1100)});
+ if(vh)vh.addEventListener('loadedmetadata',()=>{durB=vh.duration||6;vh.currentTime=Math.min(durB-.05,3.4)});
  const still=matchMedia('(prefers-reduced-motion:reduce)').matches;
- const centerX=()=>{const r=rt.getBoundingClientRect();return r.left+r.width/2};
+ const R=()=>rt.getBoundingClientRect();
+ // в видео вертикали: пик «вверх» около 1.8 с, центр около 3.4 с, «вниз» около 5.9 с
+ const mapV=x=>x<0?3.4+x*1.6:3.4+x*2.5;
  addEventListener('mousemove',e=>{
   last=Date.now();
-  const nx=Math.max(-1,Math.min(1,(e.clientX-centerX())/(innerWidth*.45)));
-  target=(nx+1)/2;
-  const r=rt.getBoundingClientRect(),ny=Math.max(-1,Math.min(1,(e.clientY-(r.top+r.height/2))/(innerHeight*.5)));
-  rt.style.transform='translateY('+(ny*6).toFixed(1)+'px) rotate('+(nx*2).toFixed(1)+'deg)';
+  const r=R(),cx=r.left+r.width/2,cy=r.top+r.height/2;
+  const nx=Math.max(-1,Math.min(1,(e.clientX-cx)/(innerWidth*.45))),ny=Math.max(-1,Math.min(1,(e.clientY-cy)/(innerHeight*.4)));
+  if(hover!==null)return;
+  const ax=Math.abs(nx),ay=Math.abs(ny);
+  if(domV){if(ax>ay+.12)domV=false}else{if(ay>ax+.12)domV=true}
+  if(domV){tV=ny;tH=.5}else{tH=(nx+1)/2;tV=0}
+  rt.style.transform='translateY('+(ny*4).toFixed(1)+'px) rotate('+(nx*2).toFixed(1)+'deg)';
  });
- // на кнопки и ссылки: смотрит на них
+ // на кнопки и ссылки: смотрит на них и машет
  document.querySelectorAll('a.btn,nav .links a').forEach(a=>{
-  a.addEventListener('mouseenter',()=>{if(a.classList.contains('btn'))setTimeout(()=>{if(hover!==null)playWave()},250);const r=a.getBoundingClientRect();hover=Math.max(0,Math.min(1,((r.left+r.width/2-centerX())/(innerWidth*.45)+1)/2));target=hover});
+  a.addEventListener('mouseenter',()=>{if(a.classList.contains('btn'))setTimeout(()=>{if(hover!==null)playWave()},250);const r=a.getBoundingClientRect(),c=R();hover=Math.max(0,Math.min(1,((r.left+r.width/2-(c.left+c.width/2))/(innerWidth*.45)+1)/2));tH=hover;tV=0;domV=false});
   a.addEventListener('mouseleave',()=>{hover=null});
  });
- // плавный цикл: догоняем цель, без рывков
- let t0=0;
  function tick(ts){
   if(ready&&!still){
-   if(Date.now()-last>3500&&hover===null){target=.5+.32*Math.sin(ts/1900)+.1*Math.sin(ts/730)} // сам осматривается
-   cur+=(target-cur)*.11;
-   const t=Math.max(0,Math.min(dur-.05,cur*dur));
-   if(Math.abs(t-shown)>.004){v.currentTime=t;shown=t}
+   if(Date.now()-last>3500&&hover===null){tH=.5+.32*Math.sin(ts/1900)+.1*Math.sin(ts/730);tV=0;domV=false} // сам осматривается
+   cH+=(tH-cH)*.11;cV+=(tV-cV)*.11;
+   const tA=Math.max(0,Math.min(durA-.05,cH*durA));
+   if(Math.abs(tA-shH)>.004){v.currentTime=tA;shH=tA}
+   if(vh){const tB=Math.max(0,Math.min(durB-.05,mapV(cV)));if(Math.abs(tB-shV)>.004){vh.currentTime=tB;shV=tB}
+    const dA=Math.abs(cH-.5)*2,dB=Math.abs(cV);vh.classList.toggle('on',dB>dA+.04)}
   }
   requestAnimationFrame(tick);
  }
  requestAnimationFrame(tick);
- robot.addEventListener('click',()=>{last=0;target=Math.random()<.5?.08:.92});
+ robot.addEventListener('click',()=>{last=0;tH=Math.random()<.5?.08:.92;tV=0;domV=false});
  robot.addEventListener('mouseenter',()=>{bub.classList.add('on');setTimeout(()=>bub.classList.remove('on'),2600)});
 })();
 </script>
