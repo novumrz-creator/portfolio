@@ -50,15 +50,15 @@ h1 em{font-style:normal;background:linear-gradient(90deg,#9cc4ff,#5b8cff);-webki
 .stack:hover .s2{transform:rotate(-10deg) translate(-16px,10px)}
 
 /* робот */
-.robot{position:relative;height:480px;display:grid;place-items:center}
-.rb{position:relative;width:min(470px,100%);aspect-ratio:1;animation:bob 5.5s ease-in-out infinite}
+.robot{position:relative;height:500px;display:grid;place-items:center}
+.rb{position:relative;width:min(300px,72%);aspect-ratio:624/902;animation:bob 5.5s ease-in-out infinite}
 @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
 .rt{position:absolute;inset:0;transition:transform .25s ease-out;will-change:transform}
 .rt video#rh{z-index:1;opacity:0;transition:opacity .16s}
 .rt video#rh.on{opacity:1}
 .rt video#rw{z-index:2;opacity:0;transition:opacity .18s}
 .rt video#rw.on{opacity:1}
-.rt video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;-webkit-mask-image:radial-gradient(closest-side,#000 72%,transparent 100%);mask-image:radial-gradient(closest-side,#000 72%,transparent 100%);background:transparent}
+.rt video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;-webkit-mask-image:radial-gradient(ellipse closest-side,#000 88%,transparent 100%);mask-image:radial-gradient(ellipse closest-side,#000 88%,transparent 100%);background:transparent}
 .bubble{position:absolute;top:6%;right:8%;z-index:3;padding:9px 16px;border-radius:18px 18px 18px 4px;background:rgba(156,196,255,.95);color:#0b1a3a;font-weight:700;font-size:14px;opacity:0;transform:translateY(8px) scale(.9);transition:opacity .4s,transform .4s;pointer-events:none}
 .bubble.on{opacity:1;transform:none}
 /* лента */
@@ -139,7 +139,7 @@ footer .btn{margin-bottom:22px}
 #lb.on{display:grid}
 #lb img{max-height:92vh;max-width:92vw;border-radius:16px;box-shadow:0 30px 90px rgba(0,0,0,.7)}
 @media(max-width:860px){
- .hero{grid-template-columns:1fr;padding-top:50px}.robot{height:360px}
+ .hero{grid-template-columns:1fr;padding-top:50px}.robot{height:420px}
  .work{grid-template-columns:1fr}.work.rev .media{order:0}
  nav .links{display:none}
 }
@@ -171,7 +171,7 @@ footer .btn{margin-bottom:22px}
     <div class="rb"><div class="rt" id="rt">
       <video id="rh" src="media/robot/head_vert.mp4" muted playsinline preload="auto"></video>
       <video id="rw" src="media/robot/wave.mp4" muted playsinline preload="auto"></video>
-      <video id="rv" src="media/robot/head_turn.mp4" muted playsinline preload="auto" poster="media/robot/center.jpg"></video>
+      <video id="rv" src="media/robot/head_turn.mp4" muted playsinline preload="auto" poster="media/robot/poster.jpg"></video>
     </div></div>
   </div>
 </header>
