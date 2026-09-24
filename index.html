@@ -54,8 +54,7 @@ h1 em{font-style:normal;background:linear-gradient(90deg,#9cc4ff,#5b8cff);-webki
 .rb{position:relative;width:min(470px,100%);aspect-ratio:1;animation:bob 5.5s ease-in-out infinite}
 @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
 .rt{position:absolute;inset:0;transition:transform .25s ease-out;will-change:transform}
-.rt img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .16s;-webkit-mask-image:radial-gradient(closest-side,#000 70%,transparent 100%);mask-image:radial-gradient(closest-side,#000 70%,transparent 100%)}
-.rt img.on{opacity:1}
+.rt video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;-webkit-mask-image:radial-gradient(closest-side,#000 72%,transparent 100%);mask-image:radial-gradient(closest-side,#000 72%,transparent 100%);background:transparent}
 .bubble{position:absolute;top:6%;right:8%;z-index:3;padding:9px 16px;border-radius:18px 18px 18px 4px;background:rgba(156,196,255,.95);color:#0b1a3a;font-weight:700;font-size:14px;opacity:0;transform:translateY(8px) scale(.9);transition:opacity .4s,transform .4s;pointer-events:none}
 .bubble.on{opacity:1;transform:none}
 /* лента */
@@ -166,13 +165,7 @@ footer .btn{margin-bottom:22px}
   <div class="robot rv" id="robot" aria-label="Робот AURA">
     <div class="bubble" id="bubble">Привет! Я AURA</div>
     <div class="rb"><div class="rt" id="rt">
-      <img class="on" data-k="center" src="media/robot/center.jpg" alt="Робот AURA">
-      <img data-k="left" src="media/robot/left.jpg" alt="">
-      <img data-k="right" src="media/robot/right.jpg" alt="">
-      <img data-k="up" src="media/robot/up.jpg" alt="">
-      <img data-k="down" src="media/robot/down.jpg" alt="">
-      <img data-k="point_left" src="media/robot/point_left.jpg" alt="">
-      <img data-k="point_right" src="media/robot/point_right.jpg" alt="">
+      <video id="rv" src="media/robot/head_turn.mp4" muted playsinline preload="auto" poster="media/robot/center.jpg"></video>
     </div></div>
   </div>
 </header>
@@ -294,7 +287,7 @@ if(canHover){
  });
 }else{
  const vio=new IntersectionObserver(es=>es.forEach(e=>{const v=e.target;if(e.isIntersecting){v.play().catch(()=>{})}else{v.pause()}}),{threshold:.35});
- document.querySelectorAll('video').forEach(v=>vio.observe(v));
+ document.querySelectorAll('video:not(#rv)').forEach(v=>vio.observe(v));
 }
 // счётчики
 const cio=new IntersectionObserver(es=>es.forEach(e=>{if(!e.isIntersecting)return;const el=e.target,to=+el.dataset.to,pre=el.dataset.pre||'';let t0=null;
@@ -316,35 +309,41 @@ document.querySelectorAll('[data-zoom]').forEach(p=>p.addEventListener('click',(
 lb.addEventListener('click',()=>lb.classList.remove('on'));
 addEventListener('keydown',e=>{if(e.key==='Escape')lb.classList.remove('on')});
 
-// робот AURA: следит за мышкой, показывает рукой на кнопки
+// робот AURA: голова плавно поворачивается за мышкой (перемотка видео)
 (function(){
- const robot=document.getElementById('robot'),rt=document.getElementById('rt'),bub=document.getElementById('bubble');
- if(!robot)return;
- const im={};rt.querySelectorAll('img').forEach(i=>im[i.dataset.k]=i);
- let cur='center',pointing=false,last=Date.now();
- const show=k=>{if(k===cur)return;im[cur].classList.remove('on');im[k].classList.add('on');cur=k};
- const center=()=>{const r=rt.getBoundingClientRect();return[r.left+r.width/2,r.top+r.height/2]};
+ const robot=document.getElementById('robot'),rt=document.getElementById('rt'),v=document.getElementById('rv'),bub=document.getElementById('bubble');
+ if(!robot||!v)return;
+ let target=.5,cur=.5,dur=6,last=Date.now(),hover=null,ready=false,shown=-1;
+ v.addEventListener('loadedmetadata',()=>{dur=v.duration||6;ready=true;v.currentTime=dur*.5});
+ const still=matchMedia('(prefers-reduced-motion:reduce)').matches;
+ const centerX=()=>{const r=rt.getBoundingClientRect();return r.left+r.width/2};
  addEventListener('mousemove',e=>{
-  last=Date.now();if(pointing)return;
-  const[cx,cy]=center(),dx=e.clientX-cx,dy=e.clientY-cy,ax=Math.abs(dx),ay=Math.abs(dy);
-  if(ax<90&&ay<110)show('center');
-  else if(ax>ay*.9)show(dx<0?'left':'right');
-  else show(dy<0?'up':'down');
-  const nx=Math.max(-1,Math.min(1,dx/innerWidth*2)),ny=Math.max(-1,Math.min(1,dy/innerHeight*2));
-  rt.style.transform='translate('+(nx*14).toFixed(1)+'px,'+(ny*8).toFixed(1)+'px) rotate('+(nx*3).toFixed(1)+'deg)';
+  last=Date.now();
+  const nx=Math.max(-1,Math.min(1,(e.clientX-centerX())/(innerWidth*.45)));
+  target=(nx+1)/2;
+  const r=rt.getBoundingClientRect(),ny=Math.max(-1,Math.min(1,(e.clientY-(r.top+r.height/2))/(innerHeight*.5)));
+  rt.style.transform='translateY('+(ny*6).toFixed(1)+'px) rotate('+(nx*2).toFixed(1)+'deg)';
  });
- // показывает рукой на кнопки и ссылки
+ // на кнопки и ссылки: смотрит на них
  document.querySelectorAll('a.btn,nav .links a').forEach(a=>{
-  a.addEventListener('mouseenter',()=>{const[cx]=center(),r=a.getBoundingClientRect();pointing=true;show(r.left+r.width/2>cx?'point_right':'point_left');rt.style.transform=''});
-  a.addEventListener('mouseleave',()=>{pointing=false;show('center')});
+  a.addEventListener('mouseenter',()=>{const r=a.getBoundingClientRect();hover=Math.max(0,Math.min(1,((r.left+r.width/2-centerX())/(innerWidth*.45)+1)/2));target=hover});
+  a.addEventListener('mouseleave',()=>{hover=null});
  });
- // на телефоне и без движения: сам «осматривается», по касанию показывает рукой
- const seq=['left','center','right','center','up','center','right','center'];let n=0;
- setInterval(()=>{if(pointing||Date.now()-last<3500)return;show(seq[n++%seq.length]);rt.style.transform=''},1800);
- robot.addEventListener('click',()=>{pointing=true;show(n%2?'point_right':'point_left');n++;setTimeout(()=>{pointing=false;show('center')},1400)});
- // приветствие
+ // плавный цикл: догоняем цель, без рывков
+ let t0=0;
+ function tick(ts){
+  if(ready&&!still){
+   if(Date.now()-last>3500&&hover===null){target=.5+.32*Math.sin(ts/1900)+.1*Math.sin(ts/730)} // сам осматривается
+   cur+=(target-cur)*.11;
+   const t=Math.max(0,Math.min(dur-.05,cur*dur));
+   if(Math.abs(t-shown)>.004){v.currentTime=t;shown=t}
+  }
+  requestAnimationFrame(tick);
+ }
+ requestAnimationFrame(tick);
+ robot.addEventListener('click',()=>{last=0;target=Math.random()<.5?.08:.92});
  setTimeout(()=>bub.classList.add('on'),900);setTimeout(()=>bub.classList.remove('on'),6000);
- robot.addEventListener('mouseenter',()=>{bub.textContent='Привет! Я AURA';bub.classList.add('on');setTimeout(()=>bub.classList.remove('on'),2600)});
+ robot.addEventListener('mouseenter',()=>{bub.classList.add('on');setTimeout(()=>bub.classList.remove('on'),2600)});
 })();
 </script>
 </body>
