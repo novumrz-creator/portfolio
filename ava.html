@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ава — ИИ-аватар для рилс | Роман Золотой</title>
+<meta name="description" content="Ава — ИИ-аватар: говорящая героиня для рилс, собранная нейросетями. Ролик 9:16, 44 секунд.">
+<meta property="og:title" content="Ава — ИИ-аватар для рилс">
+<meta property="og:image" content="media/ava/poster.jpg">
+<meta name="theme-color" content="#0b1a3a">
+<style>
+:root{--bg:#070f24;--navy:#0b1a3a;--navy2:#12285a;--card:#10224d;--line:#2a4a94;--ink:#eef3ff;--mut:#aebbd9;--acc:#7fb0ff;--acc2:#9cc4ff;--btn:#2f5fd0}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;overflow-x:hidden}
+body{background:var(--bg);color:var(--ink);font-family:-apple-system,"SF Pro Display","Helvetica Neue",Helvetica,Arial,sans-serif;line-height:1.55;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:1120px;margin:0 auto;padding:0 22px}
+/* фон */
+.bg{position:fixed;inset:0;z-index:-1;background:linear-gradient(160deg,#0b1a3a 0%,#0d2050 45%,#070f24 100%)}
+.bg i{position:absolute;border-radius:50%;filter:blur(90px);opacity:.5;animation:float 18s ease-in-out infinite}
+.bg i:nth-child(1){width:46vw;height:46vw;left:-12vw;top:-10vw;background:#2f5fd0}
+.bg i:nth-child(2){width:38vw;height:38vw;right:-10vw;top:30vh;background:#1b3b7a;animation-delay:-6s}
+.bg i:nth-child(3){width:30vw;height:30vw;left:25vw;bottom:-14vw;background:#3b7bff;opacity:.28;animation-delay:-11s}
+@keyframes float{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(4vw,3vw) scale(1.12)}}
+#glow{position:fixed;width:420px;height:420px;border-radius:50%;pointer-events:none;z-index:0;background:radial-gradient(circle,rgba(127,176,255,.16),transparent 65%);transform:translate(-50%,-50%);left:-999px;top:-999px;transition:opacity .3s}
+/* навигация */
+nav{position:sticky;top:0;z-index:20;backdrop-filter:blur(14px);background:rgba(7,15,36,.55);border-bottom:1px solid rgba(42,74,148,.35)}
+nav .wrap{display:flex;align-items:center;justify-content:space-between;height:62px}
+nav b{font-size:15px;letter-spacing:.3px}
+nav .links{display:flex;gap:26px;font-size:14px;color:var(--mut)}
+nav .links a{transition:color .2s}nav .links a:hover{color:#fff}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:13px 24px;border-radius:40px;background:var(--acc2);color:#0b1a3a;font-weight:700;font-size:15px;transition:transform .25s,box-shadow .25s}
+.btn:hover{transform:translateY(-3px);box-shadow:0 10px 30px rgba(127,176,255,.35)}
+.btn.pulse{animation:pulse 2.6s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(156,196,255,.55)}70%{box-shadow:0 0 0 16px rgba(156,196,255,0)}100%{box-shadow:0 0 0 0 rgba(156,196,255,0)}}
+.btn.ghost{background:transparent;border:1px solid var(--line);color:var(--ink)}
+/* hero */
+.hero{padding:70px 0 50px;display:grid;grid-template-columns:1.1fr .9fr;gap:40px;align-items:center}
+.kick{font-size:12px;letter-spacing:2.4px;text-transform:uppercase;color:var(--acc);font-weight:700;margin-bottom:16px}
+h1{font-size:clamp(38px,6vw,68px);line-height:1.02;letter-spacing:-1.5px;font-weight:800}
+h1 em{font-style:normal;background:linear-gradient(90deg,#9cc4ff,#5b8cff);-webkit-background-clip:text;background-clip:text;color:transparent}
+.lead{margin-top:20px;font-size:19px;color:var(--mut);max-width:520px}
+.cta{margin-top:30px;display:flex;flex-wrap:wrap;gap:12px}
+.stack{position:relative;height:460px}
+.stack img{position:absolute;width:250px;border-radius:18px;box-shadow:0 30px 70px rgba(0,0,0,.55);transition:transform .5s cubic-bezier(.2,.8,.2,1)}
+.stack .s1{right:10px;top:0;transform:rotate(5deg)}
+.stack .s2{left:10px;bottom:0;transform:rotate(-6deg)}
+.stack:hover .s1{transform:rotate(9deg) translate(16px,-10px)}
+.stack:hover .s2{transform:rotate(-10deg) translate(-16px,10px)}
+
+/* робот */
+.robot{position:relative;height:500px;display:grid;place-items:center}
+.rb{position:relative;width:min(300px,72%);aspect-ratio:624/902;animation:bob 5.5s ease-in-out infinite}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+.rt{position:absolute;inset:0;transition:transform .25s ease-out;will-change:transform}
+.rt video#rh{z-index:1;opacity:0;transition:opacity .16s}
+.rt video#rh.on{opacity:1}
+.rt video#rw{z-index:2;opacity:0;transition:opacity .18s}
+.rt video#rw.on{opacity:1}
+.rt video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;-webkit-mask-image:radial-gradient(ellipse closest-side,#000 80%,rgba(0,0,0,.35) 92%,transparent 100%);mask-image:radial-gradient(ellipse closest-side,#000 80%,rgba(0,0,0,.35) 92%,transparent 100%);background:transparent}
+.bubble{position:absolute;top:6%;right:8%;z-index:3;padding:9px 16px;border-radius:18px 18px 18px 4px;background:rgba(156,196,255,.95);color:#0b1a3a;font-weight:700;font-size:14px;opacity:0;transform:translateY(8px) scale(.9);transition:opacity .4s,transform .4s;pointer-events:none}
+.bubble.on{opacity:1;transform:none}
+/* лента */
+.marq{overflow:hidden;border-block:1px solid rgba(42,74,148,.4);background:rgba(16,34,77,.35);padding:16px 0;margin:20px 0 10px}
+.marq div{display:flex;gap:46px;width:max-content;animation:m 28s linear infinite;color:var(--mut);font-size:15px;letter-spacing:.4px}
+.marq span::before{content:"◆";color:var(--acc);margin-right:46px;font-size:9px;vertical-align:middle}
+@keyframes m{to{transform:translateX(-50%)}}
+/* секции */
+section{padding:74px 0;position:relative;z-index:1}
+h2{font-size:clamp(28px,4vw,44px);line-height:1.08;letter-spacing:-.8px;font-weight:800;margin-bottom:12px}
+.sub{color:var(--mut);max-width:620px;font-size:17px}
+.grid4{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px;margin-top:38px}
+.card{background:linear-gradient(180deg,rgba(18,40,90,.75),rgba(16,34,77,.75));border:1px solid var(--line);border-radius:22px;padding:26px;transition:transform .3s,border-color .3s,box-shadow .3s;transform-style:preserve-3d}
+.card{position:relative;overflow:hidden}
+.card:hover{transform:translateY(-10px);border-color:#5b8cff;box-shadow:0 26px 60px rgba(0,0,0,.45),0 0 34px rgba(91,140,255,.28)}
+.card::after{content:"";position:absolute;top:0;left:-70%;width:45%;height:100%;background:linear-gradient(100deg,transparent,rgba(156,196,255,.16),transparent);transform:skewX(-18deg);transition:left .8s ease;pointer-events:none}
+.card:hover::after{left:130%}
+.card .ic{transition:transform .35s}
+.card:hover .ic{transform:translateY(-4px) rotate(-6deg) scale(1.1)}
+.card .ic{width:44px;height:44px;border-radius:14px;background:rgba(127,176,255,.15);display:grid;place-items:center;font-size:22px;margin-bottom:16px}
+.card h3{font-size:18px;margin-bottom:8px}
+.card p{color:var(--mut);font-size:15px}
+/* работы */
+.work{display:grid;grid-template-columns:1fr 1fr;gap:34px;align-items:center;margin-top:52px}
+.work.rev .media{order:2}
+.media{display:flex;gap:18px;align-items:flex-end;justify-content:center}
+.pic{width:44%;border-radius:18px;overflow:hidden;box-shadow:0 24px 60px rgba(0,0,0,.5);transition:transform .4s cubic-bezier(.2,.8,.2,1);cursor:zoom-in}
+.pic:hover{transform:translateY(-10px) scale(1.03)}
+.pic img{display:block;width:100%}
+.phone{width:40%;border-radius:26px;padding:7px;background:linear-gradient(160deg,#2a4a94,#0b1a3a);box-shadow:0 24px 60px rgba(0,0,0,.55);transition:transform .4s}
+.phone{position:relative}
+.phone:hover,.phone.live{transform:translateY(-16px) scale(1.06);box-shadow:0 34px 80px rgba(0,0,0,.6),0 0 0 2px rgba(127,176,255,.7),0 0 46px rgba(91,140,255,.55)}
+.hint{position:absolute;left:50%;bottom:16px;transform:translateX(-50%);padding:6px 13px;border-radius:30px;background:rgba(7,15,36,.72);backdrop-filter:blur(6px);font-size:12px;color:#dbe7ff;white-space:nowrap;pointer-events:none;transition:opacity .3s}
+.phone.live .hint{opacity:0}
+@media(hover:none){.hint{display:none}}
+.phone video{display:block;width:100%;border-radius:20px;background:#000}
+.tag{display:inline-block;padding:6px 14px;border-radius:30px;background:rgba(127,176,255,.14);color:var(--acc2);font-size:13px;font-weight:600;margin-bottom:14px}
+.work h3{font-size:28px;letter-spacing:-.4px;margin-bottom:10px}
+.work p{color:var(--mut);font-size:16px}
+.work ul{list-style:none;margin-top:16px;display:grid;gap:8px;color:#d6e2ff;font-size:15px}
+.work li::before{content:"✓";color:var(--acc);margin-right:10px;font-weight:700}
+.legend{margin-top:10px;font-size:12.5px;color:var(--mut);text-align:center}
+/* цифры */
+.nums{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:18px;margin-top:34px}
+.num{border:1px solid var(--line);border-radius:22px;padding:26px;background:rgba(16,34,77,.55);text-align:center;transition:transform .3s,border-color .3s,box-shadow .3s}
+.num:hover{transform:translateY(-8px) scale(1.03);border-color:#5b8cff;box-shadow:0 20px 44px rgba(0,0,0,.4)}
+.num b{display:block;font-size:44px;letter-spacing:-1px;background:linear-gradient(90deg,#fff,#9cc4ff);-webkit-background-clip:text;background-clip:text;color:transparent}
+.num>span{color:var(--mut);font-size:14px}
+/* шаги */
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:18px;margin-top:38px;counter-reset:s}
+.step{position:relative;padding:26px;border-radius:22px;border:1px solid var(--line);background:rgba(16,34,77,.55);transition:transform .3s,border-color .3s,box-shadow .3s}
+.step:hover{transform:translateY(-8px) translateX(4px);border-color:#5b8cff;box-shadow:0 20px 44px rgba(0,0,0,.4)}
+.step::before{display:inline-block;transition:transform .3s}
+.step:hover::before{transform:scale(1.25) translateX(6px)}
+.step::before{counter-increment:s;content:"0" counter(s);font-size:32px;font-weight:800;color:var(--acc)}
+.step h3{margin:6px 0;font-size:18px}.step p{color:var(--mut);font-size:14.5px}
+/* тексты */
+.txt{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px;margin-top:34px}
+.txt .card p{color:#cbd8f5;font-size:15px}
+.txt .lab{font-size:11.5px;letter-spacing:1.4px;text-transform:uppercase;color:var(--acc);font-weight:700;margin-bottom:10px}
+/* цены */
+.price{margin-top:34px;border:1px solid var(--line);border-radius:22px;overflow:hidden;background:rgba(16,34,77,.55)}
+.price div{display:flex;justify-content:space-between;gap:16px;padding:18px 26px;border-bottom:1px solid rgba(42,74,148,.6);font-size:16.5px;transition:background .2s}
+.price div:last-child{border-bottom:0}
+.price div span{transition:transform .3s}
+.price div:hover{background:rgba(47,95,208,.22)}
+.price div:hover span{transform:translateX(12px)}
+.price b{white-space:nowrap}
+.trial{margin-top:24px;border-radius:24px;padding:36px;background:linear-gradient(135deg,#1b3b7a,#2f5fd0);display:flex;flex-wrap:wrap;gap:20px;align-items:center;justify-content:space-between}
+.trial h3{font-size:24px}.trial p{color:#d8e4ff;max-width:560px;margin-top:6px}
+footer{padding:44px 0 60px;text-align:center;color:var(--mut);font-size:14px;border-top:1px solid rgba(42,74,148,.35)}
+footer .btn{margin-bottom:22px}
+/* появление */
+.rv{opacity:0;transform:translateY(34px);transition:opacity .8s ease,transform .8s cubic-bezier(.2,.8,.2,1)}
+.rv.in{opacity:1;transform:none}
+/* лайтбокс */
+#lb{position:fixed;inset:0;background:rgba(3,8,22,.9);display:none;place-items:center;z-index:50;cursor:zoom-out;padding:24px}
+#lb.on{display:grid}
+#lb img{max-height:92vh;max-width:92vw;border-radius:16px;box-shadow:0 30px 90px rgba(0,0,0,.7)}
+@media(max-width:860px){
+ .hero{grid-template-columns:1fr;padding-top:50px}.robot{height:420px}
+ .work{grid-template-columns:1fr}.work.rev .media{order:0}
+ nav .links{display:none}
+}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.rv{opacity:1;transform:none}}
+
+.av{display:grid;grid-template-columns:.8fr 1.2fr;gap:50px;align-items:center;padding:60px 0 30px}
+.av .phone{width:min(340px,100%);margin:0 auto}
+.av .phone video{cursor:pointer}
+.back{display:inline-block;margin-bottom:22px;color:var(--mut);font-size:14px}.back:hover{color:#fff}
+@media(max-width:800px){.av{grid-template-columns:1fr;gap:30px}}
+</style>
+</head>
+<body>
+<div class="bg"><i></i><i></i><i></i></div>
+<nav><div class="wrap">
+  <b>Роман Золотой</b>
+  <div class="links"><a href="index.html#work">Работы</a><a href="index.html#services">Услуги</a><a href="index.html#price">Цены</a></div>
+  <a class="btn" href="https://t.me/AuraRz" target="_blank" rel="noopener">Написать</a>
+</div></nav>
+<section><div class="wrap">
+  <a class="back" href="index.html">← Все работы</a>
+  <div class="av">
+    <div class="phone live"><video id="v" src="media/ava/ava.mp4" poster="media/ava/poster.jpg" controls playsinline preload="metadata"></video></div>
+    <div>
+      <div class="tag">ИИ-аватар · Reels 9:16 · 44 с</div>
+      <h1 style="font-size:clamp(34px,5vw,56px)">Ава: <em>кабинет продюсера рилс</em></h1>
+      <p class="lead">Героиня, которой нет в реальности, рассказывает о своём деле как живой человек. Сценарий, кадры, голос, монтаж и субтитры сделаны нейросетями: без съёмок, без камеры и без студии. Это пример работы: ролик уже опубликован в Instagram, можно посмотреть и оценить результат.</p>
+      <ul style="list-style:none;margin-top:20px;display:grid;gap:8px;color:#d6e2ff;font-size:15px">
+        <li>✓ Персонаж с постоянной внешностью во всех сценах</li>
+        <li>✓ Монтаж: чистая речь без пауз, субтитры с подсветкой слова</li>
+        <li>✓ Свободная музыка, вертикальный формат для Reels и Shorts</li>
+        <li>✓ Можно сделать такого героя для вашего бренда</li>
+      </ul>
+      <div class="cta"><a class="btn pulse" href="https://t.me/AuraRz" target="_blank" rel="noopener">Заказать аватара</a>
+      <a class="btn ghost" href="https://www.instagram.com/reel/DdwcrcWkz35/" target="_blank" rel="noopener">Смотреть в Instagram</a></div>
+      <p class="legend" style="text-align:left;margin-top:16px">Героиня создана ИИ и не является реальным человеком.</p>
+    </div>
+  </div>
+</div></section>
+<section><div class="wrap">
+  <div class="kick">Как это сделано</div>
+  <h2>От идеи до готового рилса за несколько дней</h2>
+  <p class="sub">Такой же ролик можно сделать под ваш бренд или личный блог.</p>
+  <div class="grid4">
+    <div class="card"><div class="ic">✍️</div><h3>Сценарий</h3><p>Короткий текст с крючком в первых секундах: зритель остаётся до конца.</p></div>
+    <div class="card"><div class="ic">🎭</div><h3>Героиня</h3><p>Один и тот же персонаж во всех сценах, со своим голосом и характером.</p></div>
+    <div class="card"><div class="ic">🎬</div><h3>Монтаж</h3><p>Чистая речь без пауз и «э-э», плавные стыки, субтитры с подсветкой слов.</p></div>
+    <div class="card"><div class="ic">📱</div><h3>Формат</h3><p>Вертикальное 9:16 для Reels, Shorts и TikTok, с обложкой и легкой музыкой.</p></div>
+  </div>
+  <div class="cta" style="margin-top:38px"><a class="btn pulse" href="https://t.me/AuraRz" target="_blank" rel="noopener">Обсудить свой ролик</a><a class="btn ghost" href="index.html">← Все работы</a></div>
+</div></section>
+<footer><div class="wrap">
+  <a class="btn" href="https://t.me/AuraRz" target="_blank" rel="noopener">Telegram: @AuraRz</a>
+  <div>Роман Золотой · Портфолио</div>
+</div></footer>
+</body></html>
